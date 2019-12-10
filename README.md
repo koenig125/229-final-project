@@ -17,7 +17,13 @@ Train a MLP for a maximum of 1000 epochs with 2 hidden layers of dimension 500 a
 
 ```python mlp.py -f r50 -e 1000 -l 500 250 -lr 0.001 -a 0.0001```
 
-### Training Examples
+### Saving Models
+
+Models can be saved after training by using the -s flag. This is useful if it takes a long time to train.
+
+```python svm.py -f r50 -s```
+
+### Defining Number Training Examples
 
 Models can be trained using a subset of the training data for faster results and experimentation.
 
@@ -43,7 +49,7 @@ Search MLP hyperparameter space over learning rate = ['0.01', '0.001'] and alpha
 
 ## Evaluating Saved Models
 
-Trained SVM and MLP models are saved to the `models` directory. They can be loaded and evaluated against the validation or test set using the `evaluate.py` script. This script also allows for creating a confusion matrix from a model's predictions.
+Saved SVM and MLP models appear in the `models` directory. They can be loaded and evaluated against the validation or test set using the `evaluate.py` script. This script also allows for creating a confusion matrix from a model's predictions.
 
 Evaluate on validation set:
 
