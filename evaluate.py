@@ -5,13 +5,11 @@ Script to evaluate saved sklearn models that have been trained on the LeafSnap i
 import argparse
 
 import data
+import models
 import utils
 
 
 def parse_args():
-    """
-    Parses the evaluation arguments.
-    """
     parser = argparse.ArgumentParser(description="SVM args.")
 
     # Should be 'r50', 'r101', 'r152', or 'overfeat'
@@ -33,16 +31,16 @@ def eval_saved_model(feature_extractor, model_name, is_test, cm=False):
     X, y = (X_test, y_test) if is_test else (X_val, y_val)
         
     print('Loading model...')
-    model = utils.load_model(model_name)
+    model = models.load_model(model_name)
 
     print('Making predictions...')
     predictions = model.predict(X)
-    utils.accuracy(predictions, y)
+    models.accuracy(predictions, y)
 
     if cm:
         print('Creating confusion matrix...')
         cm_path = 'images/cm_' + model_name + '.png'
-        utils.confusion_matrix(predictions, y, 'Confusion Matrix - ' + model_name, cm_path)
+        utils.make_cm(predictions, y, 'Confusion Matrix - ' + model_name, cm_path)
 
 
 def main(args):

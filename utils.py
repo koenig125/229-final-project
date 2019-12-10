@@ -3,8 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import sklearn
-from joblib import dump, load
+from sklearn.metrics import confusion_matrix
 from matplotlib import cm
 
 # Mapping from labels to species for the LeafSnap image embeddings
@@ -12,53 +11,18 @@ labels_to_species = {
     # TODO: Fill in once mapping of label numbers to species names is known
 }
 
-models_dir = 'models/'
 images_dir = 'images/'
 
 
-def save_model(model, name):
+def make_cm(predictions, labels, title, path):
     """
-    Saves a trained sklearn model.
-
-    :param - model: trained sklearn model
-    :param - name: filename of the model to save
-    """
-    make_dir(models_dir)
-    filename = models_dir + name + '.joblib'
-    dump(model, filename)
-
-
-def load_model(name):
-    """
-    Loads a saved sklearn model.
-
-    :param - name: filename of the model to load
-    return: sklearn model saved at name specified
-    """
-    filename = models_dir + name + '.joblib'
-    return load(filename)
-
-
-def accuracy(predictions, labels):
-    """
-    Calculate classification accuracy given predictions and labels.
+    Calculate confusion matrix given predictions and labels and plot.
 
     :param - predictions: list for which index i holds the prediction for embedding i
     :param - labels: list for which index i holds ground truth label for embedding i
     """
-    accuracy = sklearn.metrics.accuracy_score(labels, predictions)
-    print('Accuracy: {0:.5f}'.format(accuracy))
-
-
-def confusion_matrix(predictions, labels, title, path):
-    """
-    Calculate confusion matrix given predictions and labels.
-
-    :param - predictions: list for which index i holds the prediction for embedding i
-    :param - labels: list for which index i holds ground truth label for embedding i
-    """
-    confusion_matrix = sklearn.metrics.confusion_matrix(labels, predictions)
-    plot_heatmap(confusion_matrix, title, path, 'Predicted Label', 'True Label')
+    cm = confusion_matrix(labels, predictions)
+    plot_heatmap(cm, title, path, 'Predicted Label', 'True Label')
 
 
 def plot_heatmap(matrix, title, path, xlabel=None, ylabel=None):

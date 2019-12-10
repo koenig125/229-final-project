@@ -3,18 +3,13 @@ Script to train SVM classifier on image embeddings from the LeafSnap dataset.
 """
 
 import argparse
-import time
 
 from sklearn.svm import SVC
 
-import data
-import utils
+import models
 
 
 def parse_args():
-    """
-    Parses the svm arguments.
-    """
     parser = argparse.ArgumentParser(description="SVM args.")
 
     # Should be 'r50', 'r101', 'r152', or 'overfeat'
@@ -32,30 +27,26 @@ def parse_args():
     return parser.parse_args()
 
 
-def train_and_save(args):
-    start_time = time.time()
+def train(args):
+    svc = SVC(C=args.regularization, kernel=args.kernel, gamma=args.gamma)
+    models.train_model(svc, args.feature_extractor, args.num_examples)
+    return svc
 
+
+def save(svc, args):
+    params = [args.feature_extractor, str(args.regularization), 
+            args.kernel, args.gamma, str(args.num_examples)]
+    model_name = 'svm_' + '_'.join(params)
+    models.save_model(svc, model_name)
+
+
+def main():
+    args = parse_args()
     print('Feature Extractor:', args.feature_extractor, 'Kernel:', args.kernel, 
     'C:', args.regularization, 'Gamma:', args.gamma, 'N:', args.num_examples)
-
-    print('Loading data...')
-    X_train, X_val, X_test, y_train, y_val, y_test = data.load_data(args.feature_extractor)
-    
-    print('Training model...')
-    svc = SVC(C=args.regularization, kernel=args.kernel, gamma=args.gamma)
-    svc.fit(X_train[:args.num_examples], y_train[:args.num_examples])
-
-    print('Making predictions...')
-    predictions = svc.predict(X_val)
-    utils.accuracy(predictions, y_val)
-
-    print('Saving model...')
-    model_name = '_'.join([args.feature_extractor, args.kernel, str(args.regularization), args.gamma, str(args.num_examples)])
-    utils.save_model(svc, model_name)
-
-    print("--- trained SVM in %s seconds ---" % (time.time() - start_time))
+    svc = train(args)
+    save(svc, args)
 
 
 if __name__=='__main__':
-	args = parse_args()
-	train_and_save(args)
+    main()

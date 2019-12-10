@@ -1,6 +1,6 @@
-'''
+"""
 Exports functions to load image embedding data and prep for use in training.
-'''
+"""
 
 import torch
 from sklearn.model_selection import train_test_split

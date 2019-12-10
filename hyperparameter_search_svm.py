@@ -5,7 +5,7 @@ Script to explore hyperparameter space for SVM training.
 import argparse
 import copy
 
-from svm import train_and_save
+from svm import train, save
 
 
 def arg_parse():
@@ -39,7 +39,8 @@ def hyperparameter_search(args):
                         new_args.regularization = r
                         new_args.gamma = g
                         new_args.num_examples = n
-                        train_and_save(new_args)
+                        svc = train(new_args)
+                        save(svc, new_args)
 
 
 if __name__ == '__main__':
