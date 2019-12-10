@@ -34,8 +34,8 @@ def train(args):
 
 
 def save(svc, args):
-    params = [args.feature_extractor, str(args.regularization), 
-            args.kernel, args.gamma, str(args.num_examples)]
+    params = [args.feature_extractor, args.kernel, 
+    str(args.regularization), args.gamma, str(args.num_examples)]
     model_name = 'svm_' + '_'.join(params)
     models.save_model(svc, model_name)
 
