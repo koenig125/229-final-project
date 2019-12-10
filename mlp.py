@@ -25,6 +25,8 @@ def parse_args():
                         help='MLP regularization parameter')
     parser.add_argument('-n', '--num_examples', type=int, default=1000000,
                         help='Number training examples')
+    parser.add_argument('-s', '--save', default=False, action="store_true",
+                        help='Save the trained MLP model.')
 
     return parser.parse_args()
 
@@ -49,7 +51,8 @@ def main():
     print('Feature Extractor:', args.feature_extractor, 'Epochs:', args.epochs, 
     'Learning Rate:', args.learning_rate, 'Layers:', args.layers, 'Alpha:', args.alpha)
     mlp = train(args)
-    save(mlp, args)
+    if args.save:
+        save(mlp, args)
 
 
 if __name__=='__main__':

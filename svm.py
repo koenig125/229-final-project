@@ -23,6 +23,8 @@ def parse_args():
                         help='SVM gamma parameter')
     parser.add_argument('-n', '--num_examples', type=int, default=1000000,
                         help='Number training examples')
+    parser.add_argument('-s', '--save', default=False, action="store_true",
+                        help='Save the trained SVM model.')
 
     return parser.parse_args()
 
@@ -45,7 +47,8 @@ def main():
     print('Feature Extractor:', args.feature_extractor, 'Kernel:', args.kernel, 
     'C:', args.regularization, 'Gamma:', args.gamma, 'N:', args.num_examples)
     svc = train(args)
-    save(svc, args)
+    if args.save:
+        save(svc, args)
 
 
 if __name__=='__main__':
