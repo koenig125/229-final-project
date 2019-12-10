@@ -30,7 +30,10 @@ def train_model(model, feature_extractor, num_examples):
     print("--- trained model in %s seconds ---" % (time.time() - start_time))
 
     print('Making predictions...')
+    start_time = time.time()
     predictions = model.predict(X_val)
+    print("--- made predictions in %s seconds ---" % (time.time() - start_time))
+    
     accuracy(predictions, y_val)
 
 

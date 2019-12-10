@@ -48,8 +48,8 @@ def save(mlp, args):
 
 def main():
     args = parse_args()
-    print('Feature Extractor:', args.feature_extractor, 'Epochs:', args.epochs, 
-    'Learning Rate:', args.learning_rate, 'Layers:', args.layers, 'Alpha:', args.alpha)
+    print('Feature Extractor:', args.feature_extractor, 'Epochs:', args.epochs, 'Layers:', args.layers,
+    'Learning Rate:', args.learning_rate, 'Alpha:', args.alpha, 'N:', args.num_examples)
     mlp = train(args)
     if args.save:
         save(mlp, args)
