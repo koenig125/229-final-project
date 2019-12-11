@@ -1,10 +1,11 @@
 import os
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
-from sklearn.metrics import confusion_matrix
 from matplotlib import cm
+from sklearn.metrics import confusion_matrix
 
 # Mapping from labels to species for the LeafSnap image embeddings
 labels_to_species = {
@@ -14,7 +15,7 @@ labels_to_species = {
 images_dir = 'images/'
 
 
-def make_cm(predictions, labels, title, path):
+def make_cm(predictions, labels, path):
     """
     Calculate confusion matrix given predictions and labels and plot.
 
@@ -22,10 +23,11 @@ def make_cm(predictions, labels, title, path):
     :param - labels: list for which index i holds ground truth label for embedding i
     """
     cm = confusion_matrix(labels, predictions)
-    plot_heatmap(cm, title, path, 'Predicted Label', 'True Label')
+    cm = cm / np.sum(cm, axis=1)[:, None] # Normalize each row to sum to 1
+    plot_heatmap(cm, path, 'Predicted Label', 'True Label')
 
 
-def plot_heatmap(matrix, title, path, xlabel=None, ylabel=None):
+def plot_heatmap(matrix, path, xlabel=None, ylabel=None):
     """
     Plots the provided matrix as a heatmap.
 
@@ -38,10 +40,9 @@ def plot_heatmap(matrix, title, path, xlabel=None, ylabel=None):
     plt.close('all')
     df_cm = pd.DataFrame(matrix)
     _ = plt.figure(figsize=(10, 7))
-    heatmap = sns.heatmap(df_cm, annot=True, cmap=sns.cm.rocket_r)
+    heatmap = sns.heatmap(df_cm)
     if xlabel: plt.xlabel(xlabel)
     if ylabel: plt.ylabel(ylabel)
-    plt.title(title)
     plt.tight_layout()
     make_dir(images_dir)
     plt.savefig(path)

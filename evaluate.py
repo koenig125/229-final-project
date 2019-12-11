@@ -41,7 +41,7 @@ def eval_saved_model(feature_extractor, model_name, n, is_test, cm=False):
     if cm:
         print('Creating confusion matrix...')
         cm_path = 'images/cm_' + model_name + '.png'
-        utils.make_cm(predictions, y, 'Confusion Matrix - ' + model_name, cm_path)
+        utils.make_cm(predictions, y, cm_path)
 
 
 def main(args):
