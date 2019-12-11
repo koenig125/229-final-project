@@ -1,6 +1,12 @@
 # 229-final-project
 Source code for CS229 final project, Stanford University.
 
+## Feature Extraction
+
+We utilize ResNet-50, ResNet-101, and ResNet-152 models to generate three separate sets of embeddings for our dataset. Before passing our images through these models, we perform some minimal normalization. We extract our embeddings from the models before passing through their final fully connected layers which map to the 1,000 image classes in ImageNet. To run our script:
+
+```python generate_embeddings.py --batch_size 128 --res [r50, r101, r152] --out dir /images```
+
 ## Training
 
 We use scikit-learn implementations of Support Vector Machines (SVM) and Multi-Layer Perceptron (MLP).
