@@ -17,11 +17,11 @@ def parse_args():
                         help='Feature extractor used to produce image embeddings')
     parser.add_argument('-e', '--epochs', type=int, default=500,
                         help='Max number of epochs to train')
-    parser.add_argument('-lr', '--learning_rate', type=float, default=0.001,
+    parser.add_argument('-lr', '--learning_rate', type=float, default=0.0001,
                         help='Step size for optimizer updates')
     parser.add_argument('-l', '--layers', nargs='+', type=int, default=(500,),
                         help='Tuple of hidden layer sizes')
-    parser.add_argument('-a', '--alpha', type=float, default=0.0001,
+    parser.add_argument('-a', '--alpha', type=float, default=0.001,
                         help='MLP regularization parameter')
     parser.add_argument('-n', '--num_examples', type=int, default=1000000,
                         help='Number training examples')
