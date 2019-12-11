@@ -4,6 +4,7 @@ Exports functions for working with sklearn models.
 
 import time
 
+import numpy as np
 from joblib import dump, load
 from sklearn.metrics import accuracy_score
 
@@ -11,30 +12,6 @@ import data
 import utils
 
 models_dir = 'models/'
-
-
-def train_model(model, feature_extractor, num_examples):
-    """
-    Trains a sklearn model.
-
-    :param - model: initialized sklearn model
-    :param - feature extractor: feature extractor used to produce image embeddings
-    return: sklearn model fitted to the embeddings produced by feature extractor
-    """
-    print('Loading data...')
-    X_train, X_val, X_test, y_train, y_val, y_test = data.load_data(feature_extractor)
-
-    print('Training model...')
-    start_time = time.time()
-    model.fit(X_train[:num_examples], y_train[:num_examples])
-    print("--- trained model in %s seconds ---" % (time.time() - start_time))
-
-    print('Making predictions...')
-    start_time = time.time()
-    predictions = model.predict(X_val)
-    print("--- made predictions in %s seconds ---" % (time.time() - start_time))
-    
-    accuracy(predictions, y_val)
 
 
 def save_model(model, name):
@@ -60,12 +37,60 @@ def load_model(name):
     return load(filename)
 
 
-def accuracy(predictions, labels):
+def train_model(model, feature_extractor, num_examples):
     """
-    Calculate classification accuracy given predictions and labels.
+    Trains a sklearn model.
 
-    :param - predictions: list for which index i holds the prediction for embedding i
-    :param - labels: list for which index i holds ground truth label for embedding i
+    :param - model: initialized sklearn model
+    :param - feature extractor: feature extractor used to produce image embeddings
+    return: sklearn model fitted to the embeddings produced by feature extractor
     """
-    accuracy = accuracy_score(labels, predictions)
-    print('Accuracy: {0:.5f}'.format(accuracy))
+    print('Loading data...')
+    X_train, X_val, X_test, y_train, y_val, y_test = data.load_data(feature_extractor)
+
+    print('Training model...')
+    start_time = time.time()
+    model.fit(X_train[:num_examples], y_train[:num_examples])
+    print("--- trained model in %s seconds ---" % (time.time() - start_time))
+
+    top_1_accuracy(model, X_val, y_val)
+
+
+def top_1_accuracy(model, X, y):
+    """
+    Calculate classification top_1_accuracy.
+
+    :param - model: trained sklearn model
+    :param - X: image embedding data
+    :param - y: labels for embeddings
+    return: 1D numpy array of predictions
+    """
+    print('Predicting top-1...')
+    predictions = model.predict(X)
+    top_1_accuracy = accuracy_score(y, predictions)
+    print('Top_1_accuracy: {0:.5f}'.format(top_1_accuracy))
+    return predictions
+
+
+def top_n_accuracy(model, X, y, n, model_type):
+    """
+    Calculates the top-n accuracy.
+
+    :param - model: trained sklearn model
+    :param - X: image embedding data
+    :param - y: labels for embeddings
+    :param - n: n for top-n accuracy
+    :param - model_type: class of sklearn model, ie SVM, MLP, etc.
+    return: 2D numpy array of top-n predictions of size (num_samples, n)
+    """
+    print('Predicting top-n...')
+    if model_type.lower() == 'svm':
+        class_scores = model.decision_function(X)
+    else:
+        class_scores = model.predict_proba(X)
+    
+    predictions = np.argsort(class_scores, axis=1)[:, -n:]
+    matches = [1 if y[i] in predictions[i] else 0 for i in range(len(y))]
+    top_n_accuracy = sum(matches) / len(matches)
+    print('Top-' + str(n) + ' accuracy:' + str(top_n_accuracy))
+    return predictions
