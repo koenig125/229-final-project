@@ -22,6 +22,8 @@ def arg_parse():
                         help='SVM gamma parameter')
     parser.add_argument('-n', '--num_examples', nargs='+', type=int, required=True,
                         help='Number training examples')
+    parser.add_argument('-s', '--save', default=False, action="store_true",
+                        help='Save the trained SVM models.')
 
     return parser.parse_args()
 
