@@ -19,9 +19,9 @@ Train a SVM using ResNet50 embeddings with rbf kernel and a C value of 10 (see s
 
 ### MLP
 
-Train a MLP for a maximum of 1000 epochs with 2 hidden layers of dimension 500 and 250:
+Train a MLP for a maximum of 1000 epochs with 1 hidden layer of dimension 500:
 
-```python mlp.py -f r50 -e 1000 -l 500 250 -lr 0.001 -a 0.0001```
+```python mlp.py -f r50 -e 1000 -l 500 -lr 0.001 -a 0.0001```
 
 ### Saving Models
 
