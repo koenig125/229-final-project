@@ -7,6 +7,14 @@ import seaborn as sns
 from matplotlib import cm
 from sklearn.metrics import confusion_matrix
 
+# Labels for species that were put in the wrong image folders in the dataset.
+invalid_labels = [
+    122, # pinus virginia
+    134, # prunus virginina
+    150, # quercus_muehlenbergii
+    130, # prunus_sargentii
+]
+
 # Mapping from labels to species for the LeafSnap image embeddings
 labels_to_species = {
     0: 'abies_concolor',
@@ -199,6 +207,19 @@ labels_to_species = {
 images_dir = 'images/'
 
 
+def get_valid_indices(labels):
+    """
+    Determine the indices for labels that are not corrupted in the dataset.
+
+    :param - labels: ground-truth labels
+    return: indices from labels excluding the incorrectly labeled species
+    """
+    idxs = (labels != invalid_labels[0])
+    for l in invalid_labels[1:]:
+        idxs = idxs & (labels != l)
+    return idxs
+
+
 def plot_cm(predictions, labels, path):
     """
     Plot confusion matrix.
@@ -218,6 +239,7 @@ def calculate_cm(predictions, labels):
 
     :param - predictions: list for which index i holds the prediction for embedding i
     :param - labels: list for which index i holds ground truth label for embedding i
+    return: 2D numpy array representing the confusion matrix
     """
     return confusion_matrix(labels, predictions)
 
@@ -227,6 +249,7 @@ def normalize_cm(confusion_matrix):
     Row-normalize a confusion matrix such that each row sums to 1.
 
     :param - confusion_matrix: 2D numpy array representing a confusion matrix.
+    return: 2D numpy array representing row-normalized confusion matrix
     """
     return confusion_matrix / np.sum(confusion_matrix, axis=1)[:, None]
 

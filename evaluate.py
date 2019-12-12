@@ -27,30 +27,32 @@ def parse_args():
                         help='Calculate where model makes misclassifications.')                        
     parser.add_argument('-c', '--confusion_matrix', default=False, action="store_true",
                         help='Create confusion matrix from predictions.')
+    parser.add_argument('-em', '--exclude_mislabeled', default=False, action="store_true",
+                        help='Exclude mislabeled classes from accuracy scores.')
     
     return parser.parse_args()
 
 
-def eval_saved_model(feature_extractor, model_name, n, is_test, make_cm=False):
+def eval_saved_model(args):
     print('Loading data...')
     X_train, X_val, X_test, y_train, y_val, y_test = data.load_data(args.feature_extractor)
-    X, y = (X_test, y_test) if is_test else (X_val, y_val)
+    X, y = (X_test, y_test) if args.is_test else (X_val, y_val)
         
     print('Loading model...')
-    model = models.load_model(model_name)
-    model_type = model_name[:3] # will be svm or mlp
-    predictions = models.top_1_accuracy(model, X, y)
+    model = models.load_model(args.model_name)
+    model_type = args.model_name[:3] # will be svm or mlp
+    predictions = models.top_1_accuracy(model, X, y, args.exclude_mislabeled)
     if args.top_n:
-        models.top_n_accuracy(model, X, y, n, model_type)
+        models.top_n_accuracy(model, X, y, args.top_n, model_type, args.exclude_mislabeled)
 
     if args.errors:
         print('Finding misclassifications...')
         cm = utils.calculate_cm(predictions, y)
         cm = utils.normalize_cm(cm)
         misclassifications(cm)
-    if make_cm:
+    if args.confusion_matrix:
         print('Creating confusion matrix...')
-        cm_path = 'images/cm_' + model_name + '.png'
+        cm_path = 'images/cm_' + args.model_name + '.png'
         utils.plot_cm(predictions, y, cm_path)
 
 
@@ -85,8 +87,7 @@ def misclassifications(cm):
 
 
 def main(args):
-    eval_saved_model(args.feature_extractor, args.model_name, args.top_n, 
-                    args.is_test, args.confusion_matrix)
+    eval_saved_model(args)
 
 
 if __name__ == '__main__':
